@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SwiftChat — Emotion-Aware Social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- =========================================================
+     AUTH PAGE
+========================================================== -->
+<div id="auth-page" class="page active">
+  <div class="auth-bg-orb orb1"></div>
+  <div class="auth-bg-orb orb2"></div>
+  <div class="auth-bg-orb orb3"></div>
+
+  <div class="auth-left">
+    <div class="auth-brand">SwiftChat</div>
+    <div class="auth-tagline">Feel it. Find it. Share it.</div>
+    <div class="auth-feature-list">
+      <div class="auth-feature">
+        <div class="feat-icon cyan">✦</div>
+        <div class="feat-label"><strong>AI Caption Generator</strong>Craft perfect captions with one click</div>
+      </div>
+      <div class="auth-feature">
+        <div class="feat-icon violet">◈</div>
+        <div class="feat-label"><strong>Emotion-Based Search</strong>Discover posts that match your mood</div>
+      </div>
+      <div class="auth-feature">
+        <div class="feat-icon pink">❋</div>
+        <div class="feat-label"><strong>AI Chatbot Assistant</strong>Your personal content companion</div>
+      </div>
+      <div class="auth-feature">
+        <div class="feat-icon amber">◇</div>
+        <div class="feat-label"><strong>Smart Recommendations</strong>Feed curated just for you</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-tab-row">
+      <button class="auth-tab active" onclick="switchAuthTab('login', this)">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('register', this)">Create Account</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form" class="auth-form">
+      <div class="auth-form-title">Welcome back ✦</div>
+      <div class="auth-form-sub">Sign in to your SwiftChat account</div>
+      <div>
+        <label class="form-label">EMAIL ADDRESS</label>
+        <input class="form-input" type="email" placeholder="you@example.com" />
+      </div>
+      <div>
+        <label class="form-label">PASSWORD</label>
+        <input class="form-input" type="password" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" onclick="goToApp()">Sign In →</button>
+      <div class="or-divider">or continue with</div>
+      <button class="btn-secondary" onclick="goToApp()">🌐 &nbsp; Continue with Google</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="register-form" class="auth-form" style="display:none">
+      <div class="auth-form-title">Join SwiftChat ✦</div>
+      <div class="auth-form-sub">Create your emotion-aware social profile</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1"><label class="form-label">FIRST NAME</label><input class="form-input" type="text" placeholder="Harsh" /></div>
+        <div style="flex:1"><label class="form-label">LAST NAME</label><input class="form-input" type="text" placeholder="Sharma" /></div>
+      </div>
+      <div>
+        <label class="form-label">USERNAME</label>
+        <input class="form-input" type="text" placeholder="@yourhandle" />
+      </div>
+      <div>
+        <label class="form-label">EMAIL ADDRESS</label>
+        <input class="form-input" type="email" placeholder="you@example.com" />
+      </div>
+      <div>
+        <label class="form-label">PASSWORD</label>
+        <input class="form-input" type="password" placeholder="Min. 8 characters" />
+      </div>
+      <button class="btn-primary" onclick="goToApp()">Create Account →</button>
+      <div class="or-divider">or</div>
+      <button class="btn-secondary" onclick="goToApp()">🌐 &nbsp; Continue with Google</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     MAIN APP
+========================================================== -->
+<div id="app-page" class="page">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">SwiftChat</div>
+    <div class="topbar-search">
+      <span class="topbar-search-icon">⌕</span>
+      <input class="topbar-search-input" type="text" placeholder="Search posts, users, emotions..." />
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-icon-btn" onclick="showView('notifications')">
+        🔔 <span class="notif-dot"></span>
+      </button>
+      <button class="topbar-icon-btn" onclick="showView('chatbot')">💬</button>
+      <div class="topbar-avatar" onclick="showView('profile')">H</div>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <button class="nav-item active" onclick="switchNav(this,'feed')">
+        <span class="nav-icon">⊞</span><span>Feed</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this,'explore')">
+        <span class="nav-icon">◎</span><span>Explore</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this,'emotion-search')">
+        <span class="nav-icon">◈</span><span>Mood Search</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this,'chatbot')">
+        <span class="nav-icon">✦</span><span>AI Assistant</span>
+        <span class="nav-badge">AI</span>
+      </button>
+      <div class="sidebar-section-label">You</div>
+      <button class="nav-item" onclick="switchNav(this,'profile')">
+        <span class="nav-icon">◉</span><span>Profile</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this,'notifications')">
+        <span class="nav-icon">🔔</span><span>Notifications</span>
+        <span class="nav-badge">4</span>
+      </button>
+      <button class="nav-item" onclick="switchNav(this,'saved')">
+        <span class="nav-icon">◇</span><span>Saved</span>
+      </button>
+      <div class="sidebar-footer">
+        <div class="user-card-mini">
+          <div class="user-card-mini-avatar">H</div>
+          <div>
+            <div class="user-card-mini-name">Harsh</div>
+            <div class="user-card-mini-handle">@harsh892</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+
+      <!-- ===== FEED VIEW ===== -->
+      <div id="view-feed" class="view">
+
+        <!-- Create Post -->
+        <div class="create-post-card animate-in">
+          <div class="create-post-row">
+            <div class="topbar-avatar" style="width:38px;height:38px">H</div>
+            <textarea class="create-post-input" rows="2" id="post-text-input" placeholder="What's on your mind? Let AI craft it for you..."></textarea>
+          </div>
+          <div class="create-post-actions">
+            <button class="create-action-btn">📷 Photo</button>
+            <button class="create-action-btn">🎥 Video</button>
+            <button class="create-action-btn">😊 Feeling</button>
+            <button class="create-action-btn ai" onclick="openCaptionModal()">✦ AI Caption</button>
+            <button class="btn-primary" style="margin-left:auto;padding:8px 20px;font-size:13px">Post</button>
+          </div>
+        </div>
+
+        <!-- Stories -->
+        <div class="story-bar">
+          <div class="story-item">
+            <div class="story-ring"><div class="story-inner story-add">＋</div></div>
+            <div class="story-name">Your Story</div>
+          </div>
+          <div class="story-item" style="animation-delay:0.1s">
+            <div class="story-ring"><div class="story-inner">🌸</div></div>
+            <div class="story-name">Priya</div>
+          </div>
+          <div class="story-item" style="animation-delay:0.15s">
+            <div class="story-ring"><div class="story-inner">🎮</div></div>
+            <div class="story-name">Rohan</div>
+          </div>
+          <div class="story-item" style="animation-delay:0.2s">
+            <div class="story-ring seen"><div class="story-inner">🎨</div></div>
+            <div class="story-name">Aryan</div>
+          </div>
+          <div class="story-item" style="animation-delay:0.25s">
+            <div class="story-ring"><div class="story-inner">☕</div></div>
+            <div class="story-name">Neha</div>
+          </div>
+          <div class="story-item" style="animation-delay:0.3s">
+            <div class="story-ring seen"><div class="story-inner">🌿</div></div>
+            <div class="story-name">Isha</div>
+          </div>
+          <div class="story-item" style="animation-delay:0.35s">
+            <div class="story-ring"><div class="story-inner">🏔️</div></div>
+            <div class="story-name">Dev</div>
+          </div>
+        </div>
+
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+          <button class="section-tab active">For You</button>
+          <button class="section-tab">Following</button>
+          <button class="section-tab">Trending</button>
+        </div>
+
+        <!-- POST 1 -->
+        <div class="post-card" style="animation-delay:0.05s">
+          <div class="post-header">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#00e5ff,#a855f7)">P</div>
+            <div class="post-user">
+              <div class="post-username">Priya Mehta</div>
+              <div class="post-handle">@priyamehta · 2h ago</div>
+            </div>
+            <span class="post-emotion-badge emotion-happy">😊 Happy</span>
+            <button class="post-more">⋯</button>
+          </div>
+          <div class="post-content">
+            <strong>Golden hour hits different when you're finally living your dream. 🌅</strong><br>
+            Three years of hard work, countless rejections, and here I am — with my own studio! Grateful doesn't even begin to cover it. #GoldenHour #CreativeLife
+          </div>
+          <div class="post-image" style="background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(244,114,182,0.06));font-size:64px">🌅</div>
+          <div class="ai-caption-tag">✦ AI-Generated Caption</div>
+          <div class="post-actions">
+            <button class="post-action-btn liked">❤️ <span>284</span></button>
+            <button class="post-action-btn">💬 <span>42</span></button>
+            <button class="post-action-btn">🔁 <span>18</span></button>
+            <button class="post-action-btn post-share">↗ Share</button>
+          </div>
+        </div>
+
+        <!-- POST 2 -->
+        <div class="post-card" style="animation-delay:0.1s">
+          <div class="post-header">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#34d399,#00e5ff)">R</div>
+            <div class="post-user">
+              <div class="post-username">Rohan Dev</div>
+              <div class="post-handle">@rohandev · 5h ago</div>
+            </div>
+            <span class="post-emotion-badge emotion-excited">⚡ Excited</span>
+            <button class="post-more">⋯</button>
+          </div>
+          <div class="post-content">
+            Just shipped v2.0 of my open source project! 🚀 After 6 months of building in public, the response has been overwhelming. 847 stars overnight and counting.<br><br>
+            The tech stack: <strong>Next.js + FastAPI + pgvector</strong> — sound familiar? 😄 Check the repo link in bio!
+          </div>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ <span>521</span></button>
+            <button class="post-action-btn">💬 <span>93</span></button>
+            <button class="post-action-btn">🔁 <span>147</span></button>
+            <button class="post-action-btn post-share">↗ Share</button>
+          </div>
+        </div>
+
+        <!-- POST 3 -->
+        <div class="post-card" style="animation-delay:0.15s">
+          <div class="post-header">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#f472b6,#a855f7)">A</div>
+            <div class="post-user">
+              <div class="post-username">Aryan Kapoor</div>
+              <div class="post-handle">@aryanart · 1d ago</div>
+            </div>
+            <span class="post-emotion-badge emotion-inspired">✨ Inspired</span>
+            <button class="post-more">⋯</button>
+          </div>
+          <div class="post-content">
+            <strong>The mountains taught me silence.</strong> No wifi, no distractions — just the sound of wind and the weight of perspective. Sometimes you need altitude to gain gratitude. 🏔️
+          </div>
+          <div class="post-image" style="background:linear-gradient(160deg,rgba(168,85,247,0.1),rgba(0,229,255,0.06));font-size:64px">🏔️
+            <div class="post-image-overlay"></div>
+          </div>
+          <div class="ai-caption-tag">✦ AI-Generated Caption</div>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ <span>1.2k</span></button>
+            <button class="post-action-btn">💬 <span>67</span></button>
+            <button class="post-action-btn">🔁 <span>89</span></button>
+            <button class="post-action-btn post-share">↗ Share</button>
+          </div>
+        </div>
+
+        <!-- POST 4 -->
+        <div class="post-card" style="animation-delay:0.2s">
+          <div class="post-header">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#fbbf24,#f472b6)">N</div>
+            <div class="post-user">
+              <div class="post-username">Neha Singh</div>
+              <div class="post-handle">@neha_creates · 1d ago</div>
+            </div>
+            <span class="post-emotion-badge emotion-calm">🌿 Calm</span>
+            <button class="post-more">⋯</button>
+          </div>
+          <div class="post-content">
+            Sunday morning ritual: matcha, journaling, and zero notifications. The art of doing nothing — and doing it beautifully. ☕<br>
+            <strong>Your mood is your message. Make it intentional.</strong>
+          </div>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ <span>388</span></button>
+            <button class="post-action-btn">💬 <span>31</span></button>
+            <button class="post-action-btn">🔁 <span>44</span></button>
+            <button class="post-action-btn post-share">↗ Share</button>
+          </div>
+        </div>
+
+      </div><!-- /view-feed -->
+
+      <!-- ===== EXPLORE VIEW ===== -->
+      <div id="view-explore" class="view" style="display:none">
+        <div class="section-header">
+          <div class="section-title">Explore</div>
+        </div>
+        <div class="section-tabs">
+          <button class="section-tab active">Trending</button>
+          <button class="section-tab">AI Picks</button>
+          <button class="section-tab">New</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+          <div class="post-card" style="margin-bottom:0">
+            <div style="padding:14px">
+              <div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px">#TRENDING · #1</div>
+              <div style="font-weight:600;margin-bottom:4px">The Late-Night Coder</div>
+              <div style="font-size:13px;color:var(--muted2)">2:47am and the code finally compiled. There are no words. Only silence and a cold coffee. 💻</div>
+              <div style="margin-top:10px;font-size:12px;color:var(--muted)">❤️ 4.2k · 💬 312</div>
+            </div>
+          </div>
+          <div class="post-card" style="margin-bottom:0">
+            <div style="padding:14px">
+              <div style="font-size:11px;color:var(--violet);font-family:var(--font-mono);margin-bottom:6px">✦ AI PICK</div>
+              <div style="font-weight:600;margin-bottom:4px">Monsoon & Chai</div>
+              <div style="font-size:13px;color:var(--muted2)">There's a particular kind of peace that only happens when it rains and you have nowhere to be. ☕🌧️</div>
+              <div style="margin-top:10px;font-size:12px;color:var(--muted)">❤️ 2.8k · 💬 89</div>
+            </div>
+          </div>
+          <div class="post-card" style="margin-bottom:0">
+            <div style="padding:14px">
+              <div style="font-size:11px;color:var(--cyan);font-family:var(--font-mono);margin-bottom:6px">#EMOTION · CALM</div>
+              <div style="font-weight:600;margin-bottom:4px">Minimalist Living</div>
+              <div style="font-size:13px;color:var(--muted2)">Decluttered my space. Decluttered my mind. Turns out they're the same thing. 🌿</div>
+              <div style="margin-top:10px;font-size:12px;color:var(--muted)">❤️ 1.9k · 💬 54</div>
+            </div>
+          </div>
+          <div class="post-card" style="margin-bottom:0">
+            <div style="padding:14px">
+              <div style="font-size:11px;color:var(--amber);font-family:var(--font-mono);margin-bottom:6px">#TRENDING · #4</div>
+              <div style="font-weight:600;margin-bottom:4px">First Salary Story</div>
+              <div style="font-size:13px;color:var(--muted2)">Bought my parents dinner with my first salary. The way my mom looked at me. I'll never forget that. 🥹</div>
+              <div style="margin-top:10px;font-size:12px;color:var(--muted)">❤️ 11.2k · 💬 823</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /view-explore -->
+
+      <!-- ===== MOOD SEARCH VIEW ===== -->
+      <div id="view-emotion-search" class="view" style="display:none">
+        <div class="emotion-search-hero">
+          <div class="emotion-search-title">How are you feeling?</div>
+          <div class="emotion-search-sub">Discover content that resonates with your current emotion</div>
+          <div class="emotion-search-bar">
+            <input type="text" placeholder='Describe your mood... "feeling inspired today"' id="emotion-input" />
+            <button class="btn-primary" style="border-radius:99px;padding:10px 20px;font-size:13px" onclick="triggerEmotionSearch()">Search ✦</button>
+          </div>
+          <div class="emotion-moods">
+            <button class="mood-pill mood-happy"    onclick="setMood(this,'happy','😊 Happy')">😊 Happy</button>
+            <button class="mood-pill mood-excited"  onclick="setMood(this,'excited','⚡ Excited')">⚡ Excited</button>
+            <button class="mood-pill mood-calm"     onclick="setMood(this,'calm','🌿 Calm')">🌿 Calm</button>
+            <button class="mood-pill mood-sad"      onclick="setMood(this,'sad','💜 Melancholy')">💜 Melancholy</button>
+            <button class="mood-pill mood-inspired" onclick="setMood(this,'inspired','✨ Inspired')">✨ Inspired</button>
+          </div>
+        </div>
+        <div id="emotion-results" style="display:none">
+          <div class="section-header">
+            <div class="section-title">Results for <span id="mood-label" style="color:var(--cyan)">—</span></div>
+          </div>
+          <div id="emotion-posts"></div>
+        </div>
+      </div><!-- /view-emotion-search -->
+
+      <!-- ===== CHATBOT VIEW ===== -->
+      <div id="view-chatbot" class="view" style="display:none">
+        <div class="section-header" style="margin-bottom:16px">
+          <div class="section-title">AI Assistant <span class="ai-badge" style="font-size:11px">✦ Powered by SwiftChat AI</span></div>
+        </div>
+        <div class="chatbot-layout">
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-title">Conversations</div>
+            <div class="chat-history-item active">
+              <div class="chat-hist-title">Caption ideas 🎨</div>
+              <div class="chat-hist-time">2h ago</div>
+            </div>
+            <div class="chat-history-item">
+              <div class="chat-hist-title">Mood: feeling lost</div>
+              <div class="chat-hist-time">Yesterday</div>
+            </div>
+            <div class="chat-history-item">
+              <div class="chat-hist-title">Post strategy tips</div>
+              <div class="chat-hist-time">3d ago</div>
+            </div>
+            <button class="btn-secondary" style="width:100%;margin-top:10px;font-size:12px">＋ New Chat</button>
+          </div>
+          <div class="chat-main">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-msg">
+                <div class="chat-msg-avatar bot">S</div>
+                <div class="chat-bubble bot">Hey! 👋 I'm your SwiftChat AI assistant. I can help you write captions, find content that matches your mood, navigate the platform, or just chat. What would you like to do today?</div>
+              </div>
+              <div class="chat-msg user">
+                <div class="chat-msg-avatar user-av">H</div>
+                <div class="chat-bubble user">Can you write a caption for a mountain photo? I'm feeling really inspired and at peace.</div>
+              </div>
+              <div class="chat-msg">
+                <div class="chat-msg-avatar bot">S</div>
+                <div class="chat-bubble bot">Love this vibe! ✨ Here are 3 captions capturing that inspired, peaceful feeling:<br><br>
+                  <strong>1.</strong> "The mountains taught me silence. No wifi, no distractions — just wind, altitude, and gratitude. 🏔️"<br><br>
+                  <strong>2.</strong> "Peak clarity: when the world below quiets and the one above finally makes sense."<br><br>
+                  <strong>3.</strong> "Some heights are geographical. Others are the kind that shift your entire perspective. ✦"<br><br>
+                  Which one feels right to you?
+                </div>
+              </div>
+            </div>
+            <div class="chat-suggestions">
+              <button class="chat-suggest-btn" onclick="sendSuggestion('Help me write a caption')">✦ Write a caption</button>
+              <button class="chat-suggest-btn" onclick="sendSuggestion('Show me calm content')">🌿 Calm content</button>
+              <button class="chat-suggest-btn" onclick="sendSuggestion('Trending hashtags')">📈 Trending tags</button>
+              <button class="chat-suggest-btn" onclick="sendSuggestion('Improve my post')">✏️ Improve post</button>
+            </div>
+            <div class="chat-input-area">
+              <input type="text" id="chat-input" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')sendChat()" />
+              <button class="chat-send-btn" onclick="sendChat()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /view-chatbot -->
+
+      <!-- ===== PROFILE VIEW ===== -->
+      <div id="view-profile" class="view" style="display:none">
+        <div class="profile-cover">
+          <div class="profile-cover-grid"></div>
+        </div>
+        <div class="profile-main" style="position:relative">
+          <div class="profile-avatar-big">H</div>
+          <div class="profile-info">
+            <div class="profile-name">Harsh</div>
+            <div class="profile-handle">@harsh892 · GLA University, Mathura</div>
+            <div class="profile-bio">Building SwiftChat 🚀 | CS @ GLA University | Passionate about AI, social tech, and making the web feel more human. Open to collabs ✨</div>
+            <div class="profile-stats">
+              <div class="stat-item"><div class="stat-num">128</div><div class="stat-label">Posts</div></div>
+              <div class="stat-item"><div class="stat-num">2.4k</div><div class="stat-label">Followers</div></div>
+              <div class="stat-item"><div class="stat-num">314</div><div class="stat-label">Following</div></div>
+            </div>
+            <div class="profile-actions">
+              <button class="btn-primary" style="font-size:13px;padding:9px 20px">Edit Profile</button>
+              <button class="btn-secondary" style="font-size:13px;padding:9px 20px">Share</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emotion Spectrum -->
+        <div class="widget" style="margin-bottom:20px">
+          <div class="widget-title">🎭 Your Emotional Spectrum (this week)</div>
+          <div class="emotion-bar">
+            <div class="emotion-bar-seg" style="width:38%;background:var(--amber)"></div>
+            <div class="emotion-bar-seg" style="width:22%;background:var(--cyan)"></div>
+            <div class="emotion-bar-seg" style="width:18%;background:var(--pink)"></div>
+            <div class="emotion-bar-seg" style="width:12%;background:var(--violet)"></div>
+            <div class="emotion-bar-seg" style="width:10%;background:var(--green)"></div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted2)">
+            <span style="color:var(--amber)">■ Happy 38%</span>
+            <span style="color:var(--cyan)">■ Excited 22%</span>
+            <span style="color:var(--pink)">■ Inspired 18%</span>
+            <span style="color:var(--violet)">■ Melancholy 12%</span>
+            <span style="color:var(--green)">■ Calm 10%</span>
+          </div>
+        </div>
+
+        <!-- Post Grid -->
+        <div class="section-header">
+          <div class="section-title">Your Posts</div>
+          <div class="section-tabs" style="margin-bottom:0">
+            <button class="section-tab active">Posts</button>
+            <button class="section-tab">Saved</button>
+            <button class="section-tab">Tagged</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,rgba(0,229,255,0.08),rgba(168,85,247,0.06));border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:36px">🌅</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(244,114,182,0.06));border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:36px">🏔️</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(0,229,255,0.06));border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:36px">💻</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,rgba(244,114,182,0.08),rgba(168,85,247,0.06));border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:36px">☕</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(0,229,255,0.04));border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:36px">🎨</div>
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(52,211,153,0.06));border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:36px">🚀</div>
+        </div>
+      </div><!-- /view-profile -->
+
+      <!-- ===== NOTIFICATIONS VIEW ===== -->
+      <div id="view-notifications" class="view" style="display:none">
+        <div class="section-header">
+          <div class="section-title">Notifications</div>
+          <button style="font-size:13px;color:var(--muted)">Mark all read</button>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+          <div class="notif-item notif-unread">
+            <div class="notif-av" style="background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.2)">❤️</div>
+            <div>
+              <div class="notif-text"><strong>Priya Mehta</strong> and <strong>23 others</strong> liked your post about mountain photography.</div>
+              <div class="notif-time">2 min ago</div>
+            </div>
+          </div>
+          <div class="notif-item notif-unread">
+            <div class="notif-av" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2)">💬</div>
+            <div>
+              <div class="notif-text"><strong>Rohan Dev</strong> replied: "This tech stack is fire! Mind if I contribute?"</div>
+              <div class="notif-time">18 min ago</div>
+            </div>
+          </div>
+          <div class="notif-item notif-unread">
+            <div class="notif-av" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2)">◉</div>
+            <div>
+              <div class="notif-text"><strong>Aryan Kapoor</strong> started following you.</div>
+              <div class="notif-time">1h ago</div>
+            </div>
+          </div>
+          <div class="notif-item notif-unread">
+            <div class="notif-av" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)">✦</div>
+            <div>
+              <div class="notif-text"><strong>SwiftChat AI</strong> Your emotion report is ready! You've been feeling <strong>Happy</strong> 38% of the week.</div>
+              <div class="notif-time">3h ago</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-av" style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)">🔁</div>
+            <div>
+              <div class="notif-text"><strong>Neha Singh</strong> reposted your "Sunday morning ritual" post.</div>
+              <div class="notif-time">1d ago</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-av" style="background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.15)">💬</div>
+            <div>
+              <div class="notif-text"><strong>Dev Anand</strong> commented: "Peak content as always 🏔️"</div>
+              <div class="notif-time">1d ago</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /view-notifications -->
+
+      <!-- ===== SAVED VIEW ===== -->
+      <div id="view-saved" class="view" style="display:none">
+        <div class="section-header"><div class="section-title">Saved Posts</div></div>
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar" style="background:linear-gradient(135deg,#34d399,#00e5ff)">R</div>
+            <div class="post-user">
+              <div class="post-username">Rohan Dev</div>
+              <div class="post-handle">@rohandev</div>
+            </div>
+            <span class="post-emotion-badge emotion-excited">⚡ Excited</span>
+          </div>
+          <div class="post-content">Just shipped v2.0 of my open source project! 🚀 847 stars overnight and counting...</div>
+          <div class="post-actions">
+            <button class="post-action-btn">❤️ <span>521</span></button>
+            <button class="post-action-btn">💬 <span>93</span></button>
+            <button class="post-action-btn" style="color:var(--amber)">◇ Saved</button>
+          </div>
+        </div>
+      </div><!-- /view-saved -->
+
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel">
+
+      <!-- Trending Tags -->
+      <div class="widget">
+        <div class="widget-title">📈 Trending Now</div>
+        <div class="trend-item"><span class="trend-num">1</span><span class="trend-tag">#GoldenHour</span><span class="trend-count">12.4k posts</span></div>
+        <div class="trend-item"><span class="trend-num">2</span><span class="trend-tag">#MoodSearch</span><span class="trend-count">8.1k posts</span></div>
+        <div class="trend-item"><span class="trend-num">3</span><span class="trend-tag">#AICaption</span><span class="trend-count">6.7k posts</span></div>
+        <div class="trend-item"><span class="trend-num">4</span><span class="trend-tag">#CodeLife</span><span class="trend-count">5.2k posts</span></div>
+        <div class="trend-item"><span class="trend-num">5</span><span class="trend-tag">#MonsoonVibes</span><span class="trend-count">4.8k posts</span></div>
+      </div>
+
+      <!-- Suggested Users -->
+      <div class="widget">
+        <div class="widget-title">👥 Suggested For You</div>
+        <div class="suggest-user">
+          <div class="suggest-user-av" style="background:linear-gradient(135deg,var(--green),var(--cyan))">I</div>
+          <div style="flex:1"><div class="suggest-user-name">Isha Verma</div><div class="suggest-user-sub">Followed by Priya +3</div></div>
+          <button class="follow-btn">Follow</button>
+        </div>
+        <div class="suggest-user">
+          <div class="suggest-user-av" style="background:linear-gradient(135deg,var(--pink),var(--amber))">D</div>
+          <div style="flex:1"><div class="suggest-user-name">Dev Anand</div><div class="suggest-user-sub">Similar interests</div></div>
+          <button class="follow-btn">Follow</button>
+        </div>
+        <div class="suggest-user">
+          <div class="suggest-user-av" style="background:linear-gradient(135deg,var(--violet),var(--pink))">S</div>
+          <div style="flex:1"><div class="suggest-user-name">Sara Khan</div><div class="suggest-user-sub">Followed by Rohan</div></div>
+          <button class="follow-btn">Follow</button>
+        </div>
+      </div>
+
+      <!-- Emotion Forecast Widget -->
+      <div class="widget">
+        <div class="widget-title">🎭 Your Emotion Today</div>
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:40px;margin-bottom:8px">😊</div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--amber)">Happy & Motivated</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Based on your activity today</div>
+        </div>
+        <div class="emotion-bar" style="margin-top:12px">
+          <div class="emotion-bar-seg" style="width:65%;background:var(--amber)"></div>
+          <div class="emotion-bar-seg" style="width:20%;background:var(--cyan)"></div>
+          <div class="emotion-bar-seg" style="width:15%;background:var(--pink)"></div>
+        </div>
+        <button class="btn-secondary" style="width:100%;margin-top:10px;font-size:12px"
+          onclick="switchNav(document.querySelector('.nav-item'),'emotion-search')">◈ Explore by mood</button>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);text-align:center;padding:8px 0">SwiftChat AI · GLA University 2025</div>
+    </aside>
+
+  </div>
+</div><!-- /app-page -->
+
+<!-- =========================================================
+     AI CAPTION MODAL
+========================================================== -->
+<div class="modal-overlay" id="caption-modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:4px">
+      <div class="modal-title">✦ AI Caption Generator <span class="ai-badge">AI</span></div>
+      <button class="modal-close" onclick="closeCaptionModal()">✕</button>
+    </div>
+    <div class="modal-sub">Select a tone and let SwiftChat AI craft your perfect caption.</div>
+
+    <label style="font-size:12px;color:var(--muted2);font-weight:500;letter-spacing:0.5px;display:block;margin-bottom:8px">TONE</label>
+    <div class="caption-chips">
+      <button class="caption-chip active"   onclick="selectTone(this,'Poetic')">🎭 Poetic</button>
+      <button class="caption-chip"          onclick="selectTone(this,'Witty')">⚡ Witty</button>
+      <button class="caption-chip"          onclick="selectTone(this,'Motivational')">🔥 Motivational</button>
+      <button class="caption-chip"          onclick="selectTone(this,'Minimal')">◇ Minimal</button>
+      <button class="caption-chip"          onclick="selectTone(this,'Nostalgic')">🌸 Nostalgic</button>
+      <button class="caption-chip"          onclick="selectTone(this,'Funny')">😄 Funny</button>
+    </div>
+
+    <label style="font-size:12px;color:var(--muted2);font-weight:500;letter-spacing:0.5px;display:block;margin-bottom:8px">CONTEXT (optional)</label>
+    <input class="form-input" id="caption-context" placeholder='e.g. "sunset photo from a trip to Manali"' style="margin-bottom:14px" />
+
+    <button class="btn-primary" style="width:100%;margin-bottom:12px" onclick="generateCaption()">✦ Generate Caption</button>
+
+    <div class="caption-result" id="caption-result" style="display:none"></div>
+
+    <div id="caption-actions" style="display:none;gap:8px;flex-wrap:wrap">
+      <button class="btn-secondary" style="font-size:12px" onclick="generateCaption()">↺ Regenerate</button>
+      <button class="btn-primary"   style="font-size:12px;flex:1" onclick="useCaption()">Use Caption →</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+<script src="app.js"></script>
+</body>
+</html>
