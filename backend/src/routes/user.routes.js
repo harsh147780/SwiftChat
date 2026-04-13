@@ -1,9 +1,17 @@
-const express=require("express");
-const {registerUser,loginUser,logoutUser}=require("../controllers/user.controller");
-const router=express.Router();
+// src/routes/user.routes.js
+const router = require('express').Router();
+const { getUserById, updateUser, toggleFollow, searchUsers, getConnects, getUserPosts, updateSettings } = require('../controllers/user.controller');
+const { protect } = require('../middleware/auth.middleware');
+const { upload } = require('../middleware/upload.middleware');
 
-router.post("/register",registerUser);
-router.post("/login",loginUser);
-router.post("/logout",logoutUser);
+router.use(protect); // All user routes require auth
 
-module.exports=router;
+router.get('/search', searchUsers);
+router.get('/connects', getConnects);
+router.get('/:id', getUserById);
+router.get('/:id/posts', getUserPosts);
+router.put('/update', upload.single('avatar'), updateUser);
+router.post('/follow/:id', toggleFollow);
+router.patch('/settings', updateSettings);
+
+module.exports = router;
