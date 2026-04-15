@@ -8,6 +8,7 @@ const options = {
       version: '1.0.0',
       description: 'API documentation for the SwiftChat application',
     },
+    
     servers: [
       {
         url: 'http://localhost:5000/api',

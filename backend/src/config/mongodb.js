@@ -10,6 +10,7 @@ async function connectMongoDB(retries = 5) {
   if (!process.env.MONGODB_URI) {
     logger.error('CRITICAL: MONGODB_URI is missing from environment');
   }
+  
 
   while (retries > 0) {
     try {
