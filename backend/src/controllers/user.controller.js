@@ -1,30 +1,51 @@
-const registerUser=async(req,res)=>{
-    try{
-        const {username,email,password}=req.body;
-        const userExists=await user.findOne({email});
+// src/controllers/user.controller.js
+const { getUserProfile, updateUserProfile, toggleFollow: toggleFollowService, searchUsersService, getConnectsList } = require('../services/user.service');
+const postService = require('../services/post.service');
+const { sendSuccess, sendPaginated } = require('../utils/response');
 
-        if(userExists){
-            return res.status(400).json({
-                success:false,
-                message:"user already exists"
-            });
-        }
+// GET /api/users/:id
+const getUserById = async (req, res) => {
+  const safeUser = await getUserProfile(req.params.id);
+  sendSuccess(res, { user: safeUser });
+};
 
-        const user=await User.create({
-            username,
-            email,
-            password
-        });
+// PUT /api/users/update
+const updateUser = async (req, res) => {
+  const safeUser = await updateUserProfile(req.user.id, req.body, req.file);
+  sendSuccess(res, { user: safeUser }, 'Profile updated');
+};
 
-        res.status(201).json({
-            success:true,
-            user
-        });
-    }catch(err){
-        res.status(400).json({
-            success:false,
-            message:err.message
-        });
-    }
-}
-module.exports = {  registerUser};
+// POST /api/users/follow/:id
+const toggleFollow = async (req, res) => {
+  const result = await toggleFollowService(req.user.id, req.params.id);
+  sendSuccess(res, { following: result.following }, result.message);
+};
+
+// PATCH /api/users/settings
+const updateSettings = async (req, res) => {
+  const { updateUserSettingsService } = require('../services/user.service');
+  const user = await updateUserSettingsService(req.user.id, req.body);
+  sendSuccess(res, { settings: user.settings, isPrivate: user.isPrivate }, 'Settings synchronized');
+};
+
+// GET /api/users/search
+const searchUsers = async (req, res) => {
+  const users = await searchUsersService(req.query.q);
+  sendSuccess(res, { users });
+};
+
+// GET /api/users/:id/connects — AI-matched users
+const getConnects = async (req, res) => {
+  const users = await getConnectsList(req.user.id);
+  sendSuccess(res, { users });
+};
+
+// GET /api/users/:id/posts
+const getUserPosts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const result = await postService.getUserPosts(req.params.id, req.user.id, page, limit);
+  sendPaginated(res, result.posts, result.pagination, 'User posts fetched');
+};
+
+module.exports = { getUserById, updateUser, toggleFollow, searchUsers, getConnects, getUserPosts, updateSettings };
