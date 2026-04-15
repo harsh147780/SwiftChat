@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 import store from '../store/store';
-import { logout, setToken } from '../store/slices/authSlice';
+import { logout, setToken } from '../store/store/slices/authSlice';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 

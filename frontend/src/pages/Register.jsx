@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Sparkles, Mail, Lock, User, AtSign, ArrowRight } from 'lucide-react';
-import { registerUser } from '../store/slices/authSlice';
+import { registerUser } from '../store/store/slices/authSlice';
 import toast from 'react-hot-toast';
 
 // ── 0.05-opacity star field ────────────────────────────────────────────────────

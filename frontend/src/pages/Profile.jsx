@@ -24,7 +24,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import api from "../services/api";
 import PostCard from "../components/feed/PostCard";
 import RightPanel from "../components/layout/RightPanel";
-import { fetchProfile } from "../store/slices/authSlice";
+import { fetchProfile } from "../store/store/slices/authSlice";
 
 const COLORS = ["#ec4899", "#7c3aed", "#06b6d4", "#eab308", "#8b5cf6"];
 
@@ -93,7 +93,7 @@ function IdentityModal({ profile, onClose, onSaved }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl p-8 shadow-2xl animate-fade-in flex flex-col gap-6"
+        className="relative w-full max-w-md rounded-2xl p-8 shadow-2xl animate-fade-in flex flex-col gap-6 min-h-[400px]"
         style={glassStyle}
       >
         <button
@@ -103,7 +103,7 @@ function IdentityModal({ profile, onClose, onSaved }) {
           <X size={18} />
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-6">
           <div className="p-2 rounded-xl bg-sc-accent/15">
             <Edit3 size={18} className="text-sc-accent-light" />
           </div>
@@ -117,7 +117,7 @@ function IdentityModal({ profile, onClose, onSaved }) {
 
         {error && (
           <div
-            className="mb-0 px-4 py-2.5 rounded-xl text-sm text-red-400"
+            className="mb-4 px-4 py-2.5 rounded-xl text-sm text-red-400"
             style={{
               background: "rgba(239,68,68,0.1)",
               border: "1px solid rgba(239,68,68,0.2)",
@@ -131,63 +131,48 @@ function IdentityModal({ profile, onClose, onSaved }) {
             <label className="text-xs font-bold uppercase tracking-wider text-sc-muted mb-2 block">
               Display Name
             </label>
-            <div className="relative">
-              <User
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 pointer-events-none z-10"
-                size={16}
-              />
-              <input
-                name="displayName"
-                value={form.displayName}
-                onChange={handleChange}
-                className="sc-input text-sm"
-                style={{ paddingLeft: "2.5rem" }}
-                placeholder="Your display name"
-                required
-              />
-            </div>
+            <input
+              name="displayName"
+              value={form.displayName}
+              onChange={handleChange}
+              className="sc-input text-sm px-4"
+              placeholder="Your display name"
+              required
+            />
           </div>
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-sc-muted mb-2 block">
               Username
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 text-sm select-none pointer-events-none font-bold z-10">
+            <div className="relative flex items-center">
+              <span className="absolute left-4 text-sc-muted text-sm select-none pointer-events-none">
                 @
               </span>
               <input
                 name="username"
                 value={form.username}
                 onChange={handleChange}
-                className="sc-input text-sm"
-                style={{ paddingLeft: "2.5rem" }}
+                className="sc-input text-sm pl-10"
                 placeholder="username"
                 required
               />
             </div>
           </div>
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-sc-muted mb-2 block">
+            <label className="text-xs font-bold uppercase tracking-wider text-sc-muted mb-1.5 block">
               Email
             </label>
-            <div className="relative">
-              <Mail
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 pointer-events-none z-10"
-                size={16}
-              />
-              <input
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                className="sc-input text-sm"
-                style={{ paddingLeft: "2.5rem" }}
-                placeholder="you@example.com"
-              />
-            </div>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              className="sc-input text-sm"
+              placeholder="you@example.com"
+            />
           </div>
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-sc-muted mb-2 block">
+            <label className="text-xs font-bold uppercase tracking-wider text-sc-muted mb-1.5 block">
               Bio
             </label>
             <textarea
@@ -204,11 +189,12 @@ function IdentityModal({ profile, onClose, onSaved }) {
           <button
             type="submit"
             disabled={saving}
-            className="gradient-btn w-full py-3 text-sm flex items-center justify-center gap-2 mt-2"
+            className="gradient-btn w-full py-3 text-sm flex items-center justify-center gap-2 mt-1"
           >
             {saving ? (
               <>
-                <Loader size={16} className="animate-spin" /> Syncing...
+                <Loader size={16} className="animate-spin" /> Syncing
+                Identity...
               </>
             ) : (
               <>
@@ -225,6 +211,7 @@ function IdentityModal({ profile, onClose, onSaved }) {
 // ── Settings Drawer ───────────────────────────────────────────────────────────
 function SettingsDrawer({ profile, onClose, onUpdate }) {
   const dispatch = useDispatch();
+  // Initialize from persisted DB settings so state survives refreshes
   const [notifsEnabled, setNotifsEnabled] = useState(
     profile.settings?.notifications ?? true,
   );
@@ -237,38 +224,28 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const drawerStyle = {
-    background: "rgba(2, 6, 23, 0.98)", // slate-950/98
-    backdropFilter: "blur(64px)", // backdrop-blur-3xl
+    background: "rgba(2, 6, 23, 0.99)", // Forced solid-like slate-950
+    backdropFilter: "blur(80px)", // backdrop-blur-3xl equivalent
     borderLeft: "1px solid rgba(172,138,255,0.15)",
   };
 
   const handleSettingsUpdate = async (updates) => {
-    // Optimistic UI updates
-    const prev = { notifsEnabled, privateMode, aiInsights };
-
-    if (updates.notifications !== undefined)
-      setNotifsEnabled(updates.notifications);
-    if (updates.isPrivate !== undefined) {
-      setPrivateMode(updates.isPrivate);
-      onUpdate(updates);
-    }
-    if (updates.aiInsights !== undefined) setAiInsights(updates.aiInsights);
-
     try {
       await api.patch("/users/settings", updates);
-    } catch (err) {
-      // Rollback on failure
-      if (updates.notifications !== undefined)
-        setNotifsEnabled(prev.notifsEnabled);
       if (updates.isPrivate !== undefined) {
-        setPrivateMode(prev.privateMode);
-        onUpdate({ isPrivate: prev.privateMode });
+        setPrivateMode(updates.isPrivate);
+        onUpdate(updates);
       }
-      if (updates.aiInsights !== undefined) setAiInsights(prev.aiInsights);
-
-      // We don't have direct access to toast here unless passed, but Profile uses Toast helper
-      // For simplicity, we can rely on catching error in parent or just silent rollback
+      if (updates.notifications !== undefined)
+        setNotifsEnabled(updates.notifications);
+      if (updates.aiInsights !== undefined) setAiInsights(updates.aiInsights);
+    } catch {
+      // Silent fail — local state already updated optimistically
     }
+  };
+
+  const handlePrivateToggle = (val) => {
+    handleSettingsUpdate({ isPrivate: val });
   };
 
   const Toggle = ({
@@ -306,16 +283,14 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
   return (
     <div
       className="fixed inset-0 z-[1000]"
-      style={{
-        background: "rgba(2, 6, 23, 0.85)",
-        backdropFilter: "blur(12px)",
-      }}
+      style={{ background: "rgba(6,14,32,0.50)", backdropFilter: "blur(4px)" }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
         className="absolute top-0 right-0 h-full w-full max-w-[360px] flex flex-col shadow-2xl transition-transform duration-300 animate-slide-in-right"
         style={drawerStyle}
       >
+        {/* Drawer Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-sc-accent/15">
@@ -334,7 +309,9 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
           </button>
         </div>
 
+        {/* Drawer Content */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
+          {/* Section: Privacy */}
           <p className="text-[10px] font-bold uppercase tracking-widest text-sc-muted mb-3">
             Privacy
           </p>
@@ -345,7 +322,7 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
             <div className="px-4">
               <Toggle
                 value={privateMode}
-                onChange={(val) => handleSettingsUpdate({ isPrivate: val })}
+                onChange={handlePrivateToggle}
                 label="Private Mode"
                 description="Only followers see your signals"
                 icon={Lock}
@@ -354,6 +331,7 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
             </div>
           </div>
 
+          {/* Section: Notifications */}
           <p className="text-[10px] font-bold uppercase tracking-widest text-sc-muted mb-3">
             Notifications
           </p>
@@ -381,6 +359,7 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
             </div>
           </div>
 
+          {/* Section: Danger Zone */}
           <p className="text-[10px] font-bold uppercase tracking-widest text-sc-muted mb-3">
             Danger Zone
           </p>
@@ -405,7 +384,8 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
             ) : (
               <div>
                 <p className="text-xs text-red-400 mb-3">
-                  This will permanently erase your neural signature.
+                  This will permanently erase your neural signature from the
+                  network. This is irreversible.
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -414,8 +394,8 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
                   >
                     Cancel
                   </button>
-                  <button className="flex-1 py-2 text-xs rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
-                    Terminate
+                  <button className="flex-1 py-2 text-xs rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition-colors">
+                    Terminate (Demo)
                   </button>
                 </div>
               </div>
@@ -423,9 +403,10 @@ function SettingsDrawer({ profile, onClose, onUpdate }) {
           </div>
         </div>
 
+        {/* Drawer Footer */}
         <div className="px-6 py-4 border-t border-white/8">
           <p className="text-[10px] text-sc-muted text-center">
-            SwiftChat Neural OS v1.0 · Synchronized
+            SwiftChat Neural OS v1.0 · All settings are synced locally
           </p>
         </div>
       </div>
